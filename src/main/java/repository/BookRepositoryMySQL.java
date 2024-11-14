@@ -112,12 +112,15 @@ public class BookRepositoryMySQL implements BookRepository{
     }
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException{
-        return new BookBuilder()
+        BookBuilder bookBuilder =  new BookBuilder()
                 .setId(resultSet.getLong("id"))
                 .setTitle(resultSet.getString("title"))
-                .setAuthor(resultSet.getString("author"))
-                .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
-                .build();
+                .setAuthor(resultSet.getString("author"));
+                if(resultSet.getDate("publishedDate") != null)
+                    bookBuilder.setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate());
+              //  bookBuilder.build();
+
+        return  bookBuilder.build();
 
     }
 }
