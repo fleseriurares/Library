@@ -5,6 +5,7 @@ import model.builder.BookBuilder;
 import view.model.BookDTO;
 import view.model.builder.BookDTOBuilder;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,7 @@ public class BookMapper {
     }
 
     public static Book convertBookDTOToBook(BookDTO bookDTO){
-        return new BookBuilder().setTitle(bookDTO.getTitle()).setAuthor(bookDTO.getAuthor()).build();
+        return new BookBuilder().setTitle(bookDTO.getTitle()).setAuthor(bookDTO.getAuthor()).setPublishedDate(LocalDate.of(2010,10,10)).build();
     }
 
     public static List<BookDTO> convertBookListToBookDTOList(List<Book> books){

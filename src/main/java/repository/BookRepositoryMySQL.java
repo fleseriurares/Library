@@ -63,12 +63,8 @@ public class BookRepositoryMySQL implements BookRepository{
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
-            if(book.getPublishedDate() == null)
-            {
-                preparedStatement.setDate(3,null);
-            }else{
-                preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
-            }
+            preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+
          //   preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
         //    preparedStatement.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
 
@@ -112,15 +108,13 @@ public class BookRepositoryMySQL implements BookRepository{
     }
 
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException{
-        BookBuilder bookBuilder =  new BookBuilder()
+       return new BookBuilder()
                 .setId(resultSet.getLong("id"))
                 .setTitle(resultSet.getString("title"))
-                .setAuthor(resultSet.getString("author"));
-                if(resultSet.getDate("publishedDate") != null)
-                    bookBuilder.setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate());
-              //  bookBuilder.build();
+                .setAuthor(resultSet.getString("author"))
+                .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .build();
 
-        return  bookBuilder.build();
 
     }
 }
