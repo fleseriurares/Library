@@ -18,6 +18,7 @@ public class BookController {
 
         this.bookView.addSaveButtonListener(new SaveButtonListener());
         this.bookView.addDeleteButtonListener(new DeleteButtonListener());
+        this.bookView.addSellButtonListener(new SellButtonListener());
     }
 
     private class SaveButtonListener implements EventHandler<ActionEvent>{
@@ -25,12 +26,13 @@ public class BookController {
         public void handle(ActionEvent event){
             String title = bookView.getTitle();
             String author = bookView.getAuthor();
-
+            Integer price = Integer.valueOf(bookView.getPrice());
+            Integer stock = Integer.valueOf(bookView.getStock());
             if(title.isEmpty() || author.isEmpty()){
                 bookView.addDisplayAlertMessage("Save error","Problem at Author or Title fields", "Cannot have an empty Title or Author field");
             }
             else{
-                BookDTO bookDTO = new BookDTOBuilder().setTitle(title).setAuthor(author).build();
+                BookDTO bookDTO = new BookDTOBuilder().setTitle(title).setAuthor(author).setPrice(price).setStock(stock).build();
                 boolean savedBook = bookService.save(BookMapper.convertBookDTOToBook(bookDTO));
 
                 if(savedBook){
@@ -64,6 +66,32 @@ public class BookController {
 
             } else{
                 bookView.addDisplayAlertMessage("Delete error","Problem at deleting books", "You must select a book before pressing delete button");
+            }
+
+        }
+    }
+
+    private class SellButtonListener implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent event) {
+            BookDTO bookDTO = (BookDTO) bookView.getBookTableView().getSelectionModel().getSelectedItem();
+            if(bookDTO != null){
+                boolean soldSuccessful = bookService.sellOne(BookMapper.convertBookDTOToBook(bookDTO));
+
+                if(soldSuccessful)
+                {
+                    bookView.addDisplayAlertMessage("Sold Successful","Book Sold", "You sold a book.");
+                    //bookView.updateSellBookToObservableList(bookDTO);
+                    bookDTO.setStock(bookDTO.getStock() - 1);
+                    bookView.updateSellBookFromObservableList(bookDTO);
+                }else{
+                    bookView.addDisplayAlertMessage("No more in stock","Problem at selling the book", "There was a problem at selling a book . Please try again!");
+
+                }
+
+            } else{
+                bookView.addDisplayAlertMessage("Selling error","Problem at selling books", "You must select a book before pressing sell button");
             }
 
         }

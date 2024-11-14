@@ -10,6 +10,7 @@ public interface BookRepository {
     Optional<Book> findById(Long id);
     boolean save(Book book);
     boolean delete(Book book);
+    boolean sellOne(Book book);
     void removeAll(); //flush
 
 
