@@ -61,7 +61,7 @@ public class Book {
     @Override
     public String toString()
     {
-        return "Book: Id: " + id + "; Title: " + title + "; Author: " + author + "; Published date: " + publishedDate + "; Price: " + price.toString() + "; Stock: " + stock.toString();
+        return "Book: Id: " + id + "; Title: " + title + "; Author: " + author + "; Published date: " + publishedDate;// + "; Price: " + price.toString() + "; Stock: " + stock.toString();
     }
 
 }
