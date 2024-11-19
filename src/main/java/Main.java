@@ -1,9 +1,7 @@
 import database.DatabaseConnectionFactory;
 import model.Book;
 import model.builder.BookBuilder;
-import repository.BookRepository;
-import repository.BookRepositoryMock;
-import repository.BookRepositoryMySQL;
+import repository.*;
 import service.BookService;
 import service.BookServiceImpl;
 
@@ -36,7 +34,7 @@ public class Main {
 ////        System.out.println(bookRepository.findAll());
 
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
-        BookRepositoryMySQL bookRepository = new BookRepositoryMySQL(connection);
+        BookRepository bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
         BookService bookService = new BookServiceImpl(bookRepository);
 
         bookService.save(book);
