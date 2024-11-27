@@ -1,8 +1,8 @@
 package repository.user;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import model.User;
 import model.builder.UserBuilder;
+import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.*;
@@ -25,8 +25,10 @@ public class UserRepositoryMySQL implements UserRepository{
     }
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
-         try{
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
+        try{
              String fetchUserSql =
                      "Select * from `" + USER + "` WHERE `username` = ? AND `password` = ?";
              PreparedStatement statement1 = connection.prepareStatement(fetchUserSql);
@@ -41,13 +43,18 @@ public class UserRepositoryMySQL implements UserRepository{
                         .setPassword(userResultSet.getString("password"))
                         .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
                         .build();
-                return user;
+                findByUsernameAndPasswordNotification.setResult(user);
+            }
+            else{
+                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                return findByUsernameAndPasswordNotification;
             }
 
          } catch (SQLException e) {
-             throw new RuntimeException(e);
+             findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
+            throw new RuntimeException(e);
          }
-         return null;
+         return findByUsernameAndPasswordNotification;
     }
 
     @Override

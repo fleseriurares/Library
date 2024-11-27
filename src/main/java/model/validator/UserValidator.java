@@ -12,18 +12,20 @@ import java.util.regex.Pattern;
 public class UserValidator {
     private static final String EMAIL_VALIDATION_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
     public static final int MIN_PASSWORD_LENGTH = 8;
-    private final List<String> errors = new ArrayList<>();
-    private final UserRepository userRepository;
+    private final List<String> errors;
+    private final User user;
 
-    public UserValidator(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserValidator(User user) {
+        this.user = user;
+        this.errors = new ArrayList<>();
     }
 
 
 
-    public boolean validate(String username,String password) {
-        validateUsername(username);
-        validatePassword(password);
+    public boolean validate() {
+        validateUsername(user.getUsername());
+        validatePassword(user.getPassword());
+
 
         return errors.isEmpty();
     }
@@ -60,6 +62,7 @@ public class UserValidator {
     }
 
     private boolean containsDigit(String password) {
+
         return Pattern.compile(".*[0-9].*").matcher(password).find();
     }
 
