@@ -10,6 +10,7 @@ public interface AuthenticationService {
 
     Notification<User> login(String username, String password);
 
+    Notification<User> getCurrentUser(String username, String password);
     boolean logout(User user);
 
 }

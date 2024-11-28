@@ -1,8 +1,8 @@
 package service.book;
 
 import model.Book;
+import model.User;
 import repository.book.BookRepository;
-import service.book.BookService;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -27,8 +27,12 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new IllegalArgumentException("Book with id: %d was not found.".formatted(id)));
     }
 
+    public boolean sell(Book book, User user){
+        return bookRepository.sell(book, user);
+    }
+
     @Override
-    public boolean save(Book book) {
+    public int save(Book book) {
         return bookRepository.save(book);
     }
 

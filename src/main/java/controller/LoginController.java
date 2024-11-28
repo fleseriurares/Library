@@ -1,12 +1,13 @@
 package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import launcher.EmployeeComponentFactory;
 import model.User;
 import model.validator.Notification;
 import model.validator.UserValidator;
 import service.user.AuthenticationService;
 import view.LoginView;
-
+import launcher.LoginComponentFactory;
 import java.util.EventListener;
 import java.util.List;
 
@@ -33,11 +34,12 @@ public class LoginController {
             String password = loginView.getPassword();
 
             Notification<User> loginNotification = authenticationService.login(username, password);
-
+            authenticationService.getCurrentUser(username, password);
             if(loginNotification.hasErrors()){
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
                 loginView.setActionTargetText("LogIn Successful!");
+                EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage(), loginNotification.getResult());
             }
         }
     }

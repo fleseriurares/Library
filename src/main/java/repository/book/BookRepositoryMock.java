@@ -1,6 +1,7 @@
 package repository.book;
 
 import model.Book;
+import model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +28,24 @@ public class BookRepositoryMock implements BookRepository {
     }
 
     @Override
-    public boolean save(Book book) {
-        return books.add(book);
+    public int save(Book book) {
+       if(books.add(book)){
+           return 1;
+       }
+       return -1;
     }
 
     @Override
     public boolean delete(Book book) {
         return books.remove(book);
     }
+
+    @Override
+    public boolean sell(Book book, User user) {
+        return true;
+    }
+
+
 
     @Override
     public void removeAll() {

@@ -25,6 +25,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.rightsRolesRepository = rightsRolesRepository;
     }
 
+
+
+
     @Override
     public Notification<Boolean> register(String username, String password) {
 
@@ -39,22 +42,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserValidator userValidator = new UserValidator(user);
 
         boolean userValid = userValidator.validate();
+        boolean alreadyExists = userRepository.existsByUsername(username);
+
         Notification<Boolean> userRegisterNotification = new Notification<>();
 
         if(!userValid){
+
             userValidator.getErrors().forEach(userRegisterNotification::addError);
             userRegisterNotification.setResult(Boolean.FALSE);
-        } else {
-            user.setPassword(hashPassword(password));
-            userRegisterNotification.setResult(userRepository.save(user));
-        }
+        } else if(alreadyExists) {
 
+            userRegisterNotification.addError("Username already taken.");
+            userRegisterNotification.setResult(Boolean.FALSE);
+        }else{
+                user.setPassword(hashPassword(password));
+                userRegisterNotification.setResult(userRepository.save(user));
+        }
         return userRegisterNotification;
     }
 
+
     @Override
     public Notification<User> login(String username, String password) {
+
         return userRepository.findByUsernameAndPassword(username, hashPassword(password));
+    }
+
+    @Override
+    public Notification<User> getCurrentUser(String username, String password) {
+
+        return userRepository.findByUsernameAndPassword(username, password);
     }
 
     @Override
