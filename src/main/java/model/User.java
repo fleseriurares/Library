@@ -3,15 +3,15 @@ package model;
 import java.util.List;
 
 public class User {
-    private Long id;
+    private Integer id;
     private String username;
     private String password;
 
     private List<Role> roles;
-    public Long getId() {
+    public int getId() {
         return id;
     }
-    public void setId(Long id){
+    public void setId(Integer id){
         this.id = id;
     }
 

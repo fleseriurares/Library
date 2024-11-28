@@ -3,13 +3,15 @@ import model.Role;
 import model.User;
 import model.builder.UserBuilder;
 
+import model.validator.Notification;
+import model.validator.UserValidator;
 import repository.security.RightsRolesRepository;
 import repository.user.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static database.Constants.Roles.CUSTOMER;
 
@@ -23,23 +25,53 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.rightsRolesRepository = rightsRolesRepository;
     }
 
+
+
+
     @Override
-    public boolean register(String username, String password) {
-        String encodedPassword = hashPassword(password);
+    public Notification<Boolean> register(String username, String password) {
 
         Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
 
         User user = new UserBuilder()
                 .setUsername(username)
-                .setPassword(encodedPassword)
+                .setPassword(password)
                 .setRoles(Collections.singletonList(customerRole))
                 .build();
-        return userRepository.save(user);
+
+        UserValidator userValidator = new UserValidator(user);
+
+        boolean userValid = userValidator.validate();
+        boolean alreadyExists = userRepository.existsByUsername(username);
+
+        Notification<Boolean> userRegisterNotification = new Notification<>();
+
+        if(!userValid){
+
+            userValidator.getErrors().forEach(userRegisterNotification::addError);
+            userRegisterNotification.setResult(Boolean.FALSE);
+        } else if(alreadyExists) {
+
+            userRegisterNotification.addError("Username already taken.");
+            userRegisterNotification.setResult(Boolean.FALSE);
+        }else{
+                user.setPassword(hashPassword(password));
+                userRegisterNotification.setResult(userRepository.save(user));
+        }
+        return userRegisterNotification;
+    }
+
+
+    @Override
+    public Notification<User> login(String username, String password) {
+
+        return userRepository.findByUsernameAndPassword(username, hashPassword(password));
     }
 
     @Override
-    public User login(String username, String password) {
-        return userRepository.findByUsernameAndPassword(username, hashPassword(password));
+    public Notification<User> getCurrentUser(String username, String password) {
+
+        return userRepository.findByUsernameAndPassword(username, password);
     }
 
     @Override

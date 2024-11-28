@@ -12,7 +12,7 @@ public class UserBuilder {
         user = new User();
     }
 
-    public UserBuilder setId(Long id){
+    public UserBuilder setId(Integer id){
         user.setId(id);
         return this;
     }
@@ -26,7 +26,6 @@ public class UserBuilder {
         user.setPassword(password);
         return this;
     }
-
     public UserBuilder setRoles(List<Role> roles){
         user.setRoles(roles);
         return this;

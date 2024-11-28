@@ -3,16 +3,31 @@ package model;
 import java.time.LocalDate;
 
 public class Book {
-    private Long id;
+    private Integer id;
     private String title;
     private String author;
     private LocalDate publishedDate;
 
-    public Long getId() {
+    private Integer price;
+    private Integer stock;
+    public Integer getPrice() {
+        return price;
+    }
+    public void setPrice(Integer price) {
+        this.price = price;
+    }
+    public Integer getStock() {
+        return stock;
+    }
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -43,7 +58,7 @@ public class Book {
     @Override
     public String toString()
     {
-        return "Book: Id: " + id + "; Title: " + title + "; Author: " + author + "; Published date: " + publishedDate;
+        return "Book: Id: " + id + "; Title: " + title + "; Author: " + author + "; Published date: " + publishedDate + "; Price: " + price.toString() + "; Stock: " + stock.toString();
     }
 
 }

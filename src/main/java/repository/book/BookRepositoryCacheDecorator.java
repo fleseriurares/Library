@@ -1,6 +1,7 @@
 package repository.book;
 
 import model.Book;
+import model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
     }
 
     @Override
-    public boolean save(Book book) {
+    public int save(Book book) {
         cache.invalidateCache();
         return decoratedBookRepository.save(book);
     }
@@ -50,6 +51,15 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
         cache.invalidateCache();
         return decoratedBookRepository.delete(book);
     }
+
+    @Override
+    public boolean sell(Book book, User user) {
+        cache.invalidateCache();
+        return decoratedBookRepository.sell(book, user);
+
+    }
+
+
 
 
     @Override

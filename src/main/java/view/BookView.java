@@ -26,10 +26,15 @@ public class BookView {
     private final ObservableList<BookDTO> booksObservableList; //Data Transfer Object -- pt ca nu vrem sa afisam tot din baza de date in UI
     private TextField authorTextField;
     private TextField titleTextField;
+    private TextField priceTextField;
+    private TextField stockTextField;
+    private Label priceLabel;
+    private Label stockLabel;
     private Label titleLabel;
     private Label authorLabel;
     private Button saveButton;
     private Button deleteButton;
+    private Button sellButton;
 
     public BookView(Stage primaryStage, List<BookDTO> books){
         primaryStage.setTitle("Library"); //titlul interfetei
@@ -66,17 +71,24 @@ public class BookView {
 
         bookTableView.setPlaceholder(new Label("No books to display"));
 
+        TableColumn<BookDTO, Integer> idColumn = new TableColumn<BookDTO,Integer>("Id");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
         TableColumn<BookDTO, String> titleColumn = new TableColumn<BookDTO, String>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title")); //numele din bookDTO - numele coloanei din baza de date =>  am facut data binding aici
 
         TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO,String>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
 
-        bookTableView.getColumns().addAll(titleColumn,authorColumn);
+        TableColumn<BookDTO, Integer> priceColumn = new TableColumn<BookDTO,Integer>("Price");
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        TableColumn<BookDTO, Integer> stockColumn = new TableColumn<BookDTO,Integer>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        bookTableView.getColumns().addAll(idColumn,titleColumn,authorColumn, priceColumn, stockColumn);
 
         bookTableView.setItems(booksObservableList);
 
-        gridPane.add(bookTableView, 0, 0, 5, 1); //vom avea un rand tabelul, un rand partea de label si butoane
+        gridPane.add(bookTableView, 0, 0, 8, 1); //vom avea un rand tabelul, un rand partea de label si butoane
     }
 
     private void initSaveOptions(GridPane gridPane){
@@ -98,6 +110,19 @@ public class BookView {
         deleteButton = new Button("Delete");
         gridPane.add(deleteButton, 6, 1);
 
+
+        priceLabel = new Label("Price");
+        gridPane.add(priceLabel, 1, 2);
+        priceTextField = new TextField();
+        gridPane.add(priceTextField, 2, 2);
+        stockLabel = new Label("Stock");
+        gridPane.add(stockLabel, 3, 2);
+        stockTextField = new TextField();
+        gridPane.add(stockTextField, 4, 2);
+        sellButton = new Button("Sell");
+        gridPane.add(sellButton, 5, 2);
+
+
     }
 
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
@@ -108,6 +133,10 @@ public class BookView {
         deleteButton.setOnAction(deleteButtonListener);
     }
 
+    public void addSellButtonListener(EventHandler<ActionEvent> sellButtonListener){
+        sellButton.setOnAction(sellButtonListener);
+    }
+
     public void addDisplayAlertMessage(String title, String header, String content){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -115,6 +144,22 @@ public class BookView {
         alert.setContentText(content);
 
         alert.showAndWait();
+    }
+
+    public void updateSellBookFromObservableList(BookDTO newBookDTO){
+        for(int i = 0; i < booksObservableList.size(); i++){
+            BookDTO bookDTO = booksObservableList.get(i);
+            if(bookDTO.getTitle().equals(newBookDTO.getTitle()) && bookDTO.getAuthor().equals(newBookDTO.getAuthor())){
+                booksObservableList.set(i,newBookDTO);
+            }
+        }
+    }
+
+    public String getPrice(){
+        return priceTextField.getText();
+    }
+    public String getStock(){
+        return stockTextField.getText();
     }
 
     public String getTitle(){

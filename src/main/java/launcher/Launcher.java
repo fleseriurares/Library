@@ -13,7 +13,7 @@ public class Launcher extends Application {
 
     @Override
     public void start(Stage primaryStage) throws  Exception{
-        ComponentFactory.getInstance(false, primaryStage); //false => adevaratul library, nu mock
+        LoginComponentFactory componentFactory = LoginComponentFactory.getInstance(false, primaryStage); //false => adevaratul library, nu mock
 
     }
 }

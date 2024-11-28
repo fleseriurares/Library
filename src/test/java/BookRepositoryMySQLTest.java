@@ -28,9 +28,8 @@ public class BookRepositoryMySQLTest {
     @BeforeEach
     public void cleanDataBase(){
         bookRepository.removeAll();
-        bookRepository.save(new BookBuilder().setTitle("Harry Potter").setAuthor("J. K. Rowling").setPublishedDate(LocalDate.of(1999,12,12)).build());
-        bookRepository.save(new BookBuilder().setTitle("Povestea lui Harap Alb").setAuthor("Ion Creanga").setPublishedDate(LocalDate.of(1926,7,24)).build());
-    }
+        bookRepository.save(new BookBuilder().setTitle("Harry Potter").setAuthor("J. K. Rowling").setPublishedDate(LocalDate.of(1999,12,12)).setPrice(0).setStock(0).build());
+        bookRepository.save(new BookBuilder().setTitle("Povestea lui Harap Alb").setAuthor("Ion Creanga").setPublishedDate(LocalDate.of(1926,7,24)).setPrice(0).setStock(0).build());}
 
     @Test
     public void findAll(){

@@ -11,7 +11,7 @@ public class BookBuilder {
         book = new Book();
     }
 
-    public BookBuilder setId(long id){
+    public BookBuilder setId(int id){
         book.setId(id);
         return this;
     }
@@ -31,6 +31,16 @@ public class BookBuilder {
         book.setPublishedDate(date);
         return this;
     }
+
+    public BookBuilder setPrice(Integer price){
+        book.setPrice(price);
+        return this;
+    }
+    public BookBuilder setStock(Integer stock){
+        book.setStock(stock);
+        return this;
+    }
+
 
     public Book build()
     {

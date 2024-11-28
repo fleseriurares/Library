@@ -1,8 +1,8 @@
 package repository.user;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import model.User;
 import model.builder.UserBuilder;
+import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.*;
@@ -25,8 +25,10 @@ public class UserRepositoryMySQL implements UserRepository{
     }
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
-         try{
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
+        try{
              String fetchUserSql =
                      "Select * from `" + USER + "` WHERE `username` = ? AND `password` = ?";
              PreparedStatement statement1 = connection.prepareStatement(fetchUserSql);
@@ -36,18 +38,22 @@ public class UserRepositoryMySQL implements UserRepository{
             ResultSet userResultSet = statement1.executeQuery();
             if(userResultSet.next()){
 
-                User user = new UserBuilder()
-                        .setUsername(userResultSet.getString("username"))
+                User user = new UserBuilder().setId(userResultSet.getInt("id")).setUsername(userResultSet.getString("username"))
                         .setPassword(userResultSet.getString("password"))
                         .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
                         .build();
-                return user;
+                findByUsernameAndPasswordNotification.setResult(user);
+            }
+            else{
+                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                return findByUsernameAndPasswordNotification;
             }
 
          } catch (SQLException e) {
-             throw new RuntimeException(e);
+             findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
+            throw new RuntimeException(e);
          }
-         return null;
+         return findByUsernameAndPasswordNotification;
     }
 
     @Override
@@ -61,7 +67,7 @@ public class UserRepositoryMySQL implements UserRepository{
 
             ResultSet rs = insertUserStatement.getGeneratedKeys();
             rs.next();
-            long userId = rs.getLong(1);
+            Integer userId = rs.getInt(1);
             user.setId(userId);
 
             rightsRolesRepository.addRolesToUser(user, user.getRoles());
