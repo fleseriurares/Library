@@ -13,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import model.User;
 import view.model.UserDTO;
 
 import java.util.List;
@@ -23,10 +22,11 @@ public class AdminView {
     private TableView userTableView;
     private final ObservableList<UserDTO> usersObservableList;
     private TextField usernameTextField;
-    private TextField passwordTextField;
+    private PasswordField passwordField;
     private Label usernameLabel;
     private Label passwordLabel;
     private Button saveButton;
+    private Button updateButton;
     private ComboBox rolesComboBox;
     private Button generatePdfButton;
     private Text actionTarget;
@@ -91,14 +91,17 @@ public class AdminView {
         passwordLabel = new Label("Password");
         gridPane.add(passwordLabel, 3, 1);
 
-        passwordTextField = new TextField();
-        gridPane.add(passwordTextField, 4, 1);
+        passwordField = new PasswordField();
+        gridPane.add(passwordField, 4, 1);
 
-        saveButton = new Button("Save Employee");
+        saveButton = new Button("Save");
         gridPane.add(saveButton, 1, 2);
 
+        updateButton = new Button("Update Account");
+        gridPane.add(updateButton,2,2);
+
         generatePdfButton = new Button("Generate Report");
-        gridPane.add(generatePdfButton, 2, 2);
+        gridPane.add(generatePdfButton, 4, 2);
 
         String roles[] = {"Administrator", "Employee", "Customer"};
         rolesComboBox = new ComboBox(FXCollections.observableArrayList(roles));
@@ -116,11 +119,19 @@ public class AdminView {
     }
 
     public String getPassword() {
-        return passwordTextField.getText();
+        return passwordField.getText();
     }
 
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener) {
         saveButton.setOnAction(saveButtonListener);
+    }
+
+    public void addGeneratePDFButtonListener(EventHandler<ActionEvent> generatePdfButtonListener){
+        generatePdfButton.setOnAction(generatePdfButtonListener);
+    }
+
+    public void addUpdateButtonListener(EventHandler<ActionEvent> updateButtonListener){
+        updateButton.setOnAction(updateButtonListener);
     }
 
     public void setActionTargetText(String text){ this.actionTarget.setText(text);}

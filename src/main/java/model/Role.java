@@ -44,4 +44,17 @@ public class Role {
     public String toString(){
         return this.role;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null || obj.getClass() != this.getClass()){
+            return false;
+        }
+        Role newRole = (Role)obj;
+        if(newRole.getId() == this.id && newRole.role.equals(this.role)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

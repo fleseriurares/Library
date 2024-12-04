@@ -10,12 +10,10 @@ import repository.user.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static database.Constants.Roles.CUSTOMER;
-import static database.Constants.Roles.EMPLOYEE;
+import static database.Constants.Roles.*;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -31,21 +29,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public Notification<Boolean> register(String username, String password, Integer id_role) {
+    public Notification<String> register(String username, String password, Integer id_role) {
 
-        Role customerRole;
-        if(id_role == null || id_role !=2){
-           customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
-        }
-        else{
-            customerRole = rightsRolesRepository.findRoleByTitle(EMPLOYEE);
-        }
-
+        Role newRole = getRoleById(id_role);
 
         User user = new UserBuilder()
                 .setUsername(username)
                 .setPassword(password)
-                .setRoles(Collections.singletonList(customerRole))
+                .setRoles(Collections.singletonList(newRole))
                 .build();
 
         UserValidator userValidator = new UserValidator(user);
@@ -53,28 +44,95 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         boolean userValid = userValidator.validate();
         boolean alreadyExists = userRepository.existsByUsername(username);
 
-        Notification<Boolean> userRegisterNotification = new Notification<>();
+        Notification<String> userRegisterNotification = new Notification<>();
 
         if(!userValid){
 
             userValidator.getErrors().forEach(userRegisterNotification::addError);
-            userRegisterNotification.setResult(Boolean.FALSE);
+            userRegisterNotification.setResult("-1");
         } else if(alreadyExists) {
 
             userRegisterNotification.addError("Username already taken.");
-            userRegisterNotification.setResult(Boolean.FALSE);
+            userRegisterNotification.setResult("-1");
         }else{
-                user.setPassword(hashPassword(password));
-                userRegisterNotification.setResult(userRepository.save(user));
+                String hashedPassword = hashPassword(password);
+                user.setPassword(hashedPassword);
+                if(!userRepository.save(user)){
+                    userRegisterNotification.setResult("-1");
+                }else{
+                    userRegisterNotification.setResult(hashedPassword);
+                }
         }
         return userRegisterNotification;
     }
 
+    public boolean isNewRole(User user, Role role){
+        List<Role> userRoles = user.getRoles();
+        for (Role ro: userRoles){
+            if (ro.equals(role)){
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     public Notification<User> login(String username, String password) {
 
         return userRepository.findByUsernameAndPassword(username, hashPassword(password));
+    }
+
+    public Role getRoleById(Integer id_role){
+
+        if(id_role == 1){
+            return rightsRolesRepository.findRoleByTitle(ADMINISTRATOR);
+        }
+        else if (id_role == 2){
+            return rightsRolesRepository.findRoleByTitle(EMPLOYEE);
+        }
+        else{
+            return rightsRolesRepository.findRoleByTitle(CUSTOMER);
+        }
+
+    }
+
+
+
+    @Override
+    public Notification<Boolean> updateRole(String username, String password, Integer id_role) {
+
+        Role newRole = getRoleById(id_role);
+
+        User user = new UserBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .setRoles(Collections.singletonList(newRole))
+                .build();
+
+        UserValidator userValidator = new UserValidator(user);
+        boolean userValid = userValidator.validate();
+        boolean alreadyExists = userRepository.existsByUsername(username);
+        Notification<Boolean> userUpdateNotification = new Notification<>();
+        if (!userValid) {
+            userValidator.getErrors().forEach(userUpdateNotification::addError);
+            userUpdateNotification.setResult(Boolean.FALSE);
+        }
+
+        else if (alreadyExists) {
+            Notification<User> existingUser = userRepository.findByUsernameAndPassword(username, hashPassword(password));
+            if (isNewRole(existingUser.getResult(), newRole)) {
+                rightsRolesRepository.addRolesToUser(existingUser.getResult(), Collections.singletonList(newRole));
+            } else {
+                userUpdateNotification.addError("This user already has this role.");
+                userUpdateNotification.setResult(Boolean.FALSE);
+            }
+        } else {
+            userUpdateNotification.addError("Invalid username or password!");
+            userUpdateNotification.setResult(Boolean.FALSE);
+        }
+
+
+        return userUpdateNotification;
     }
 
     @Override

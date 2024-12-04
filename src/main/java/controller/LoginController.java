@@ -60,7 +60,7 @@ public class LoginController {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
 
-            Notification<Boolean> registerNotification = authenticationService.register(username, password, 1);
+            Notification<String> registerNotification = authenticationService.register(username, password, 2);
 
             if (registerNotification.hasErrors()) {
                 loginView.setActionTargetText((registerNotification.getFormattedErrors()));

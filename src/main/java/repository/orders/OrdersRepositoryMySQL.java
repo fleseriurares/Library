@@ -1,12 +1,13 @@
 package repository.orders;
 
+import javafx.scene.control.PasswordField;
 import model.Book;
+import reports.generator.ReportData;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OrdersRepositoryMySQL implements OrdersRepository{
 
@@ -41,4 +42,34 @@ public class OrdersRepositoryMySQL implements OrdersRepository{
             return false;
         }
     }
+
+    @Override
+    public Map<String, ReportData> getSalesReport() {
+        String sql = "SELECT u.username, " +
+                "       COUNT(o.book_id) AS books_sold, " +
+                "       SUM(b.price) AS total_price " +
+                " FROM orders o" +
+                " JOIN user u ON o.user_id = u.id" +
+                " JOIN book b ON o.book_id = b.id" +
+                " JOIN user_role ur ON u.id = ur.user_id" +
+                " WHERE ur.role_id = 2" +
+                " GROUP BY u.username;";
+        Map<String, ReportData> reportData = new HashMap<>();
+
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()){
+                String username = resultSet.getString("username");
+                int booksSold = resultSet.getInt("books_sold");
+                int totalPrice = resultSet.getInt("total_price");
+                reportData.put(username, new ReportData(booksSold, totalPrice));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return reportData;
+    }
+
+
 }

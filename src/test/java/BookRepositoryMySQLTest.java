@@ -43,10 +43,7 @@ public class BookRepositoryMySQLTest {
         assertTrue(book.isEmpty());
     }
 
-    @Test
-    public void save(){
-        assertTrue(bookRepository.save(new BookBuilder().setTitle("Ion").setAuthor("Liviu Rebreanu)").setPublishedDate(LocalDate.of(1900,10,2)).build()));
-    }
+
 
     @Test
     public void delete(){

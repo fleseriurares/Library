@@ -65,6 +65,8 @@ public class UserRepositoryMySQL implements UserRepository{
                 findByUsernameAndPasswordNotification.setResult(user);
             }
             else{
+                System.out.println(username);
+                System.out.println(password);
                 findByUsernameAndPasswordNotification.addError("Invalid username or password!");
                 return findByUsernameAndPasswordNotification;
             }
@@ -126,6 +128,8 @@ public class UserRepositoryMySQL implements UserRepository{
             return false;
         }
     }
+
+
 
 //    private String getRolesFromUser(User user){
 //        Integer id = user.getId();
