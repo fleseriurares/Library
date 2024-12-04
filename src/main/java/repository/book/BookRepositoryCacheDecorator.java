@@ -36,7 +36,6 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
                     .filter(it -> it.getId().equals(id))
                     .findFirst();
         }
-
         return decoratedBookRepository.findById(id);
     }
 
@@ -58,9 +57,6 @@ public class BookRepositoryCacheDecorator extends BookRepositoryDecorator {
         return decoratedBookRepository.sell(book, user);
 
     }
-
-
-
 
     @Override
     public void removeAll() {

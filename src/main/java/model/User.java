@@ -35,6 +35,14 @@ public class User {
         return roles;
     }
 
+    public String getRolesToString(){
+        StringBuilder sb = new StringBuilder();
+        for(Role role: roles){
+            sb.append(role.getRole());
+        }
+        return sb.toString();
+    }
+
     public void setRoles(List<Role> roles) {
         this.roles = roles;
     }

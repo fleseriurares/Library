@@ -10,10 +10,12 @@ import repository.user.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static database.Constants.Roles.CUSTOMER;
+import static database.Constants.Roles.EMPLOYEE;
 
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -29,9 +31,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public Notification<Boolean> register(String username, String password) {
+    public Notification<Boolean> register(String username, String password, Integer id_role) {
 
-        Role customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
+        Role customerRole;
+        if(id_role == null || id_role !=2){
+           customerRole = rightsRolesRepository.findRoleByTitle(CUSTOMER);
+        }
+        else{
+            customerRole = rightsRolesRepository.findRoleByTitle(EMPLOYEE);
+        }
+
 
         User user = new UserBuilder()
                 .setUsername(username)
@@ -72,6 +81,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public Notification<User> getCurrentUser(String username, String password) {
 
         return userRepository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public List<User> findAll(){
+       return userRepository.findAll();
     }
 
     @Override

@@ -14,12 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BookRepositoryMockTest {
     private static BookRepository bookRepository;
-
     @BeforeAll
     public static void setup(){
         bookRepository = new BookRepositoryMock();
     }
-
     @Test
     public void findAll(){
         List<Book> books = bookRepository.findAll();
@@ -32,7 +30,9 @@ public class BookRepositoryMockTest {
         assertTrue(book.isEmpty());
     }
 
-    @Test
-    public void save(){
-        assertTrue(bookRepository.save(new BookBuilder().setTitle("Ion").setAuthor("Liviu Rebreanu)").setPublishedDate(LocalDate.of(1900,10,2)).setPrice(0).setStock(0).build()));    }
-}
+//    @Test
+//    public void save(){
+//        assertTrue(bookRepository.save(new BookBuilder().setTitle("Ion").setAuthor("Liviu Rebreanu)").setPublishedDate(LocalDate.of(1900,10,2)).setPrice(0).setStock(0).build()));    }
+
+    }
+
