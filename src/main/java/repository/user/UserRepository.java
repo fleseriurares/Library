@@ -1,5 +1,6 @@
 package repository.user;
 
+import model.Role;
 import model.User;
 import model.validator.Notification;
 

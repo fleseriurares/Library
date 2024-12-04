@@ -98,6 +98,8 @@ public class LoginView {
         logInButton.setOnAction(loginButtonListener);
     }
 
+
+
     public void addRegisterButtonListener(EventHandler<ActionEvent> signInButtonListener) {
         signInButton.setOnAction(signInButtonListener);
     }

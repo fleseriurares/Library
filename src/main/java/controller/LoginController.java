@@ -1,6 +1,7 @@
 package controller;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import launcher.AdminComponentFactory;
 import launcher.EmployeeComponentFactory;
 import model.User;
 import model.validator.Notification;
@@ -39,8 +40,14 @@ public class LoginController {
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
                 loginView.setActionTargetText("LogIn Successful!");
-                EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage(), loginNotification.getResult());
-            }
+                if(loginNotification.getResult().getRoles().get(0).getRole().equals("administrator")){
+                    AdminComponentFactory componentFactory = AdminComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(),LoginComponentFactory.getStage());
+                }
+                else{
+                    EmployeeComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage(), loginNotification.getResult());
+
+                }
+                }
         }
     }
 
@@ -53,7 +60,7 @@ public class LoginController {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
 
-            Notification<Boolean> registerNotification = authenticationService.register(username, password);
+            Notification<String> registerNotification = authenticationService.register(username, password, 2);
 
             if (registerNotification.hasErrors()) {
                 loginView.setActionTargetText((registerNotification.getFormattedErrors()));

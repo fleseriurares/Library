@@ -70,8 +70,8 @@ public class BookRepositoryMySQL implements BookRepository {
             preparedStatement.setInt(4,book.getPrice());
             preparedStatement.setInt(5,book.getStock());
 
-         //   preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
-        //    preparedStatement.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+            //   preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            //    preparedStatement.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
 
 
             int rowsInserted = preparedStatement.executeUpdate();

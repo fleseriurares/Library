@@ -1,13 +1,18 @@
 package repository.user;
 
+import model.Book;
+import model.Role;
 import model.User;
+import model.builder.BookBuilder;
 import model.builder.UserBuilder;
 import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
+import static database.Constants.Roles.EMPLOYEE;
 import static database.Constants.Tables.USER;
 
 public class UserRepositoryMySQL implements UserRepository{
@@ -21,7 +26,22 @@ public class UserRepositoryMySQL implements UserRepository{
 
     @Override
     public List<User> findAll() {
-        return null;
+        String sql = "SELECT * FROM user WHERE id IN ( SELECT user_id FROM user_role);";
+
+        List<User> users = new ArrayList<>();
+
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            while (resultSet.next()){
+                users.add(getUserFromResultSet(resultSet));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
     }
 
     @Override
@@ -45,6 +65,8 @@ public class UserRepositoryMySQL implements UserRepository{
                 findByUsernameAndPasswordNotification.setResult(user);
             }
             else{
+                System.out.println(username);
+                System.out.println(password);
                 findByUsernameAndPasswordNotification.addError("Invalid username or password!");
                 return findByUsernameAndPasswordNotification;
             }
@@ -106,5 +128,39 @@ public class UserRepositoryMySQL implements UserRepository{
             return false;
         }
     }
+
+
+
+//    private String getRolesFromUser(User user){
+//        Integer id = user.getId();
+//        String sqlQuery = "SELECT role FROM role WHERE id IN (SELECT id_role FROM user_role WHERE id_user = ?);";
+//
+//        StringBuilder sb = new StringBuilder();
+//        try{
+//            PreparedStatement pstmt = connection.prepareStatement(sqlQuery);
+//            pstmt.setInt(1, id);
+//            ResultSet resultSet = pstmt.executeQuery();
+//            while (resultSet.next()){
+//                sb.append(resultSet.getString("role"));
+//                sb.append(", ");
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return sb.toString();
+//    }
+
+    private User getUserFromResultSet(ResultSet resultSet) throws SQLException{
+
+
+        return new UserBuilder()
+                .setId(resultSet.getInt("id"))
+                .setUsername(resultSet.getString("username"))
+                .setPassword(resultSet.getString("password"))
+                .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                .build();
+    }
+
+
 
 }

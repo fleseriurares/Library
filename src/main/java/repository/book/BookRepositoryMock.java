@@ -29,10 +29,10 @@ public class BookRepositoryMock implements BookRepository {
 
     @Override
     public int save(Book book) {
-       if(books.add(book)){
-           return 1;
-       }
-       return -1;
+        if(books.add(book)){
+            return 1;
+        }
+        return -1;
     }
 
     @Override
